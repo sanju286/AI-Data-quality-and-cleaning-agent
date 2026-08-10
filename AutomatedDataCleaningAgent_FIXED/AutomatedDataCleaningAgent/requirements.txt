@@ -1,0 +1,11 @@
+pandas>=2.2
+numpy>=1.26
+streamlit>=1.50
+langgraph>=1.0
+langchain>=1.0
+langchain-openai>=1.0
+pydantic>=2.0
+pandera>=0.24
+pytest>=8.0
+openpyxl>=3.1
+python-dotenv>=1.0
