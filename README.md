@@ -1,46 +1,72 @@
-1. Open the project folder
+Overview
+An agentic data-quality system that automatically profiles tabular datasets, detects quality problems, creates a structured cleaning plan, applies safe Pandas transformations, validates the result with Pandera, and uses validation feedback to perform corrective retries.
 
-Open the folder containing:
+Architecture
+CSV / Excel
+    |
+    v
++----------------------+
+| Data Profiler        |
+| Pandas               |
++----------+-----------+
+           |
+           v
++----------------------+
+| Cleaning Planner     |
+| LLM / deterministic  |
++----------+-----------+
+           |
+           v
++----------------------+
+| Cleaning Executor    |
+| Pandas               |
++----------+-----------+
+           |
+           v
++----------------------+
+| Pandera Validator    |
++----------+-----------+
+           |
+      PASS | FAIL
+           | 
+       +---+---+
+       |       |
+       v       v
+     FINAL   Validation
+             Feedback
+                |
+                v
+             Re-profile
+                |
+                +------> Planner
+Key improvements
+1. Validation-aligned rules
+The profiler calculates robust numeric boundaries using the 3×IQR rule. The validator uses the same boundaries. This prevents the earlier situation where the profiler and validator disagreed about whether a value was an outlier.
 
-requirements.txt
-app/
-src/
-tests/
+2. Feedback-driven self-correction
+When Pandera fails, its column/check/failure information is placed back into the agent state. The next planning cycle receives that feedback and generates a corrective action.
 
-Open Command Prompt in this folder.
+3. Explainable quality score
+The dashboard calculates an explainable 0–100 score using missing-value, duplicate, outlier and categorical-consistency penalties.
 
-2. Create a virtual environment
+4. LLM + deterministic fallback
+With OPENAI_API_KEY, the planner can use a structured LLM response. Without a key, the same workflow works with a deterministic rule-based planner.
+
+Run
 python -m venv .venv
-3. Activate the virtual environment
-
-Windows:
-
 .venv\Scripts\activate
+pip install -r requirements.txt
 
-You should see:
+# optional
+copy .env.example .env
 
-(.venv)
-4. Install dependencies
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-5. Optional: Configure the LLM
-
-Create a .env file in the project root:
-
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=gpt-4o-mini
-
-If no API key is provided, the application uses the deterministic fallback planner.
-
-6. Run the Streamlit application
-python -m streamlit run app\streamlit_app.py
-
-The application will open in your browser.
-
-7. Run tests
+streamlit run app/streamlit_app.py
+Test
 pytest -q
-Quick Start
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install -r requirements.txt
-python -m streamlit run app\streamlit_app.py
+Resume-ready project description
+Automated Data Cleaning and Validation Agent | Python, Pandas, LangGraph, LLM, Pandera, Streamlit
+
+Built an agentic data-quality pipeline that profiles structured datasets, detects missing values, duplicates, categorical inconsistencies and numeric outliers, and generates explainable cleaning plans.
+Orchestrated profile → plan → clean → validate workflows with LangGraph, using structured LLM planning with a deterministic fallback for reliable execution.
+Implemented Pandera-based validation with feedback-driven self-correction, enabling the agent to analyze validation failures and perform targeted retry cycles.
+Developed a Streamlit dashboard showing before/after quality scores, detected issues, cleaning audit logs, validation history and downloadable cleaned datasets.
