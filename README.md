@@ -63,10 +63,3 @@ copy .env.example .env
 streamlit run app/streamlit_app.py
 Test
 pytest -q
-Resume-ready project description
-Automated Data Cleaning and Validation Agent | Python, Pandas, LangGraph, LLM, Pandera, Streamlit
-
-Built an agentic data-quality pipeline that profiles structured datasets, detects missing values, duplicates, categorical inconsistencies and numeric outliers, and generates explainable cleaning plans.
-Orchestrated profile → plan → clean → validate workflows with LangGraph, using structured LLM planning with a deterministic fallback for reliable execution.
-Implemented Pandera-based validation with feedback-driven self-correction, enabling the agent to analyze validation failures and perform targeted retry cycles.
-Developed a Streamlit dashboard showing before/after quality scores, detected issues, cleaning audit logs, validation history and downloadable cleaned datasets.
